@@ -1,0 +1,6 @@
+"STARTUP.obj",
+"main.obj",
+"uart.obj",
+"motor.obj" 
+TO "muban" 
+RAMSIZE(256) 
