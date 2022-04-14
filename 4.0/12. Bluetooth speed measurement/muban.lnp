@@ -1,0 +1,8 @@
+"STARTUP.obj",
+"main.obj",
+"uart.obj",
+"motor.obj",
+"time.obj",
+"Oled.obj" 
+TO "muban" 
+RAMSIZE(256) 
