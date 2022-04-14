@@ -1,0 +1,98 @@
+C51 COMPILER V9.52.0.0   UART                                                              03/18/2022 03:44:02 PAGE 1   
+
+
+C51 COMPILER V9.52.0.0, COMPILATION OF MODULE UART
+OBJECT MODULE PLACED IN uart.OBJ
+COMPILER INVOKED BY: D:\Program Files (x86)\Keil\C51\BIN\C51.EXE uart.c BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          #include "reg52.h"
+   2          #include "motor.h"
+   3          #include "string.h"
+   4          #include "delay.h"
+   5          sbit D5 = P3^7;
+   6          #define SIZE 12
+   7          
+   8          sfr AUXR = 0x8E;
+   9          char buffer[SIZE];
+  10          
+  11          void UartInit(void)   //9600bps@11.0592MHz
+  12          {
+  13   1        AUXR = 0x01;
+  14   1        SCON = 0x50; //配置串口工作方式1，REN使能接收
+  15   1        TMOD &= 0xF0;
+  16   1        TMOD |= 0x20;//定时器1工作方式位8位自动重装
+  17   1        
+  18   1        TH1 = 0xFD;
+  19   1        TL1 = 0xFD;//9600波特率的初值
+  20   1        TR1 = 1;//启动定时器
+  21   1        
+  22   1        EA = 1;//开启总中断
+  23   1        ES = 1;//开启串口中断
+  24   1      }
+  25          
+  26          //M1qian  M2 hou M3 zuo  M4 you
+  27          void Uart_Handler() interrupt 4
+  28          {
+  29   1        static int i = 0;//静态变量，被初始化一次
+  30   1        char tmp;
+  31   1      
+  32   1        if(RI)//中断处理函数中，对于接收中断的响应
+  33   1        {
+  34   2            RI = 0;//清除接收中断标志位
+  35   2            tmp = SBUF;
+  36   2            if(tmp == 'M'){
+  37   3              i = 0;
+  38   3            }
+  39   2            buffer[i++] = tmp;
+  40   2          
+  41   2            //灯控指令
+  42   2            if(buffer[0] == 'M'){
+  43   3              switch(buffer[1]){
+  44   4                case '1':
+  45   4                  D5 = 0;
+  46   4                  goForward();
+  47   4                  Delay10ms();
+  48   4                  break;
+  49   4                case '2':
+  50   4                  goBack();
+  51   4                  Delay10ms();
+  52   4                  break;
+  53   4                case '3':
+  54   4                  goLeft();
+  55   4                  Delay10ms();
+C51 COMPILER V9.52.0.0   UART                                                              03/18/2022 03:44:02 PAGE 2   
+
+  56   4                  break;
+  57   4                case '4':
+  58   4                  goRight();
+  59   4                  Delay10ms();
+  60   4                  break;
+  61   4                default:
+  62   4                  stop();
+  63   4                  break;
+  64   4              }
+  65   3            }
+  66   2          
+  67   2            if(i == 12) {
+  68   3              memset(buffer, '\0', SIZE);
+  69   3              i = 0;
+  70   3            }
+  71   2        }
+  72   1          
+  73   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    187    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     14    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

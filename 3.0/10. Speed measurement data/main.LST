@@ -1,0 +1,74 @@
+C51 COMPILER V9.52.0.0   MAIN                                                              03/22/2022 03:35:32 PAGE 1   
+
+
+C51 COMPILER V9.52.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: D:\Program Files (x86)\Keil\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          /****  Author: 上官可编程(抖音) ************
+   2           ****  录播课堂代码，为小白学习功能实现 ****
+   3           ****  代码合理性和效率不做评估 ************
+   4           ****  2022/3/22 3:35 **********************
+   5          ********************************************/
+   6          
+   7          #include "motor.h"
+   8          #include "delay.h"
+   9          #include "uart.h"
+  10          #include "reg52.h"
+  11          #include "time.h"
+  12          #include "stdio.h"
+  13          
+  14          sbit speedIO = P3^2;//外部中断0
+  15          unsigned int speedCnt = 0; //统计格子，脉冲次数
+  16          extern unsigned int speed;//速度
+  17          extern char signal; //主程序发速度数据的通知
+  18          char speedMes[24];  //主程序发送速度数据的字符串缓冲区
+  19          
+  20          void Ex0Init()
+  21          {
+  22   1        EX0 = 1;//允许中断
+  23   1        //EA = 1;在串口初始化函数中已经打开了总中断
+  24   1        IT0 = 1;//外部中断的下降沿触发
+  25   1      }
+  26          
+  27          void main()
+  28          {
+  29   1        Time0Init();//定时器0初始化
+  30   1        UartInit();//串口相关初始化
+  31   1        //外部中断初始化
+  32   1        Ex0Init();
+  33   1        
+  34   1        while(1){
+  35   2          if(signal){//定时器1s到点，把signal置一，主程序发送速度
+  36   3            sprintf(speedMes,"speed:%d cm/s",speed);//串口数据的字符串拼装，speed是格子，每个格�
+             -�1cm
+  37   3            SendString(speedMes);//速度发出去
+  38   3            signal = 0;//清0speed,下次由定时器1s后的中断处理中再置一
+  39   3          }
+  40   2        }
+  41   1      }
+  42          
+  43          void speedHandler() interrupt 0 //外部中断处理函数
+  44          {
+  45   1        speedCnt++;//码盘转动了一个格子
+  46   1      }
+  47          
+  48          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     69    ----
+   CONSTANT SIZE    =     14    ----
+   XDATA SIZE       =   ----    ----
+C51 COMPILER V9.52.0.0   MAIN                                                              03/22/2022 03:35:32 PAGE 2   
+
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     26    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,66 @@
+C51 COMPILER V9.52.0.0   MAIN                                                              03/18/2022 03:44:01 PAGE 1   
+
+
+C51 COMPILER V9.52.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: D:\Program Files (x86)\Keil\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          #include "motor.h"
+   2          #include "delay.h"
+   3          #include "uart.h"
+   4          #include "time.h"
+   5          #include "reg52.h"
+   6          extern char speedLeft;
+   7          extern char speedRight;
+   8          
+   9          
+  10          sbit leftSensor = P2^7;
+  11          sbit rightSensor = P2^6;
+  12          
+  13          void main()
+  14          {
+  15   1        Time0Init();
+  16   1        Time1Init();
+  17   1        //UartInit();
+  18   1        
+  19   1        while(1){
+  20   2          
+  21   2          if(leftSensor == 0 && rightSensor == 0){
+  22   3              speedLeft = 32;
+  23   3              speedRight = 40;
+  24   3          }
+  25   2          if(leftSensor == 1 && rightSensor == 0){
+  26   3              speedLeft = 12;//10份单位时间全速运行，30份停止，所以慢，20ms是40份的500us
+  27   3              speedRight = 40;
+  28   3          }
+  29   2          
+  30   2          if(leftSensor == 0 && rightSensor == 1){
+  31   3              speedLeft = 32;
+  32   3              speedRight = 20;
+  33   3          }
+  34   2          
+  35   2          if(leftSensor == 1 && rightSensor == 1){
+  36   3            //停
+  37   3              speedLeft = 0;
+  38   3              speedRight = 0;
+  39   3          }
+  40   2        }
+  41   1      }
+  42          
+  43          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     55    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
