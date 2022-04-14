@@ -1,0 +1,8 @@
+"STARTUP.obj",
+"main.obj",
+"uart.obj",
+"motor.obj",
+"delay.obj",
+"time.obj" 
+TO "muban" 
+RAMSIZE(256) 
